@@ -57,3 +57,7 @@ class ItemEntradaSerializer(serializers.Serializer):
 class PedidoEntradaSerializer(serializers.Serializer):
     mesa = serializers.IntegerField(min_value=1, max_value=999)
     itens = ItemEntradaSerializer(many=True, allow_empty=False)
+
+
+class StatusEntradaSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=Pedido.Status.choices)

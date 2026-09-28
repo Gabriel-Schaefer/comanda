@@ -35,3 +35,28 @@ def criar_pedido(mesa: int, itens: list[dict]) -> Pedido:
     pedido.total = total
     pedido.save(update_fields=["total"])
     return pedido
+
+
+PROXIMO_STATUS = {
+    Pedido.Status.NOVO: Pedido.Status.EM_PREPARO,
+    Pedido.Status.EM_PREPARO: Pedido.Status.PRONTO,
+    Pedido.Status.PRONTO: Pedido.Status.ENTREGUE,
+}
+
+STATUS_ATIVOS = [Pedido.Status.NOVO, Pedido.Status.EM_PREPARO, Pedido.Status.PRONTO]
+
+
+class TransicaoInvalida(Exception):
+    pass
+
+
+@transaction.atomic
+def avancar_status(pedido_id: int, novo_status: str) -> Pedido:
+    pedido = Pedido.objects.select_for_update().get(pk=pedido_id)
+    if PROXIMO_STATUS.get(pedido.status) != novo_status:
+        raise TransicaoInvalida(
+            f"Não é possível mudar o pedido {pedido.id} de {pedido.status} para {novo_status}."
+        )
+    pedido.status = novo_status
+    pedido.save(update_fields=["status", "atualizado_em"])
+    return pedido
