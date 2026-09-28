@@ -106,7 +106,7 @@ Corpo do `POST /api/pedidos/`:
 
 Regras:
 - `total`, `preco_unitario` e preços de adicionais são **calculados no servidor**. Preços enviados pelo cliente são ignorados.
-- Validações (400): lista de itens vazia; `mesa` menor que 1; `quantidade` fora de 1–20; produto inexistente ou inativo; adicional que não pertence ao produto; observação com mais de 200 caracteres.
+- Validações (400): lista de itens vazia; `mesa` fora de 1–999; `quantidade` fora de 1–20; produto inexistente ou inativo; adicional que não pertence ao produto ou repetido; observação com mais de 200 caracteres.
 - `PATCH .../status/` com corpo `{"status": "EM_PREPARO"}`. Transição fora da ordem retorna **409 Conflict**.
 - A criação do pedido é atômica (`transaction.atomic`).
 
