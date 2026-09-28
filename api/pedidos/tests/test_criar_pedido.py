@@ -72,6 +72,9 @@ CASOS_INVALIDOS = {
     "adicional_de_outro_produto": lambda d, c: d["itens"][1].update(adicionais=[c.bacon.id]),
     "adicional_repetido": lambda d, c: d["itens"][0].update(adicionais=[c.bacon.id, c.bacon.id]),
     "observacao_longa": lambda d, c: d["itens"][0].update(observacao="x" * 201),
+    "mais_de_50_itens": lambda d, c: d.update(
+        itens=[{"produto_id": c.refri.id, "quantidade": 1} for _ in range(51)]
+    ),
 }
 
 
@@ -79,6 +82,17 @@ CASOS_INVALIDOS = {
 def test_pedido_invalido_retorna_400_e_nao_grava(api_client, cardapio, caso):
     dados = payload(cardapio)
     CASOS_INVALIDOS[caso](dados, cardapio)
+
+    resposta = criar(api_client, dados)
+
+    assert resposta.status_code == 400
+    assert Pedido.objects.count() == 0
+
+
+def test_total_acima_do_limite_retorna_400_e_nao_grava(api_client, cardapio):
+    cardapio.refri.preco = Decimal("999999.99")
+    cardapio.refri.save()
+    dados = {"mesa": 1, "itens": [{"produto_id": cardapio.refri.id, "quantidade": 20}] * 6}
 
     resposta = criar(api_client, dados)
 

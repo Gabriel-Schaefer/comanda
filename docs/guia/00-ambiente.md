@@ -60,9 +60,11 @@ O navegador não entende TypeScript nem JSX (aquele HTML dentro do JavaScript qu
 
 ### Por que existe CORS
 
-O frontend roda em `localhost:5173` e a API em `localhost:8000`. Para o navegador, portas diferentes significam **origens diferentes**. Por segurança, o navegador bloqueia um site que tenta ler dados de outra origem, a menos que essa outra origem autorize.
+O frontend roda em `localhost:5173` e a API em `localhost:8000`. Para o navegador, portas diferentes significam **origens diferentes**.
 
-Sem essa regra, um site malicioso aberto numa aba poderia ler dados de outro site em que você está logado. O **CORS** é a autorização: a API responde com um cabeçalho dizendo "eu aceito pedidos vindos de `http://localhost:5173`". No projeto, isso está em `CORS_ALLOWED_ORIGINS`, dentro de `api/config/settings.py`.
+A regra de segurança se chama **política de mesma origem** (*same-origin policy*): por padrão, o JavaScript de um site não pode ler respostas vindas de outra origem. Sem ela, um site malicioso aberto numa aba poderia ler dados de outro site em que você está logado.
+
+O **CORS** (*Cross-Origin Resource Sharing*) é o jeito de o servidor **abrir uma exceção** a essa regra: a API responde com um cabeçalho dizendo "eu aceito ser lida por `http://localhost:5173`". No projeto, isso está em `CORS_ALLOWED_ORIGINS`, dentro de `api/config/settings.py`.
 
 Guarde isso: quando aparecer um erro de CORS no console, o problema quase nunca está no código do React. É a API que não autorizou aquela origem.
 
@@ -153,8 +155,8 @@ Para descrever num arquivo só todos os serviços de que o projeto precisa (banc
 **"Se o container for apagado, os dados do banco se perdem?"**
 Não, se houver um volume. O volume guarda os dados fora do container. É o que eu uso no `docker-compose.yml` do projeto.
 
-**"O que é CORS e por que o navegador bloqueia requisições?"**
-É uma proteção do navegador: um site só pode ler respostas de outra origem (domínio, porta ou protocolo diferente) se essa outra origem autorizar, por meio de cabeçalhos HTTP. Isso impede que um site malicioso leia dados de outros sites usando a sessão do usuário. A correção é no servidor: liberar a origem do frontend. No meu projeto, isso é o `CORS_ALLOWED_ORIGINS` no Django.
+**"O que é CORS e por que o navegador bloqueia a requisição?"**
+O navegador aplica a política de mesma origem: o JavaScript de um site não pode ler respostas de outra origem (domínio, porta ou protocolo diferente). Isso impede que um site malicioso leia dados de outros sites usando a sessão do usuário. CORS é o mecanismo pelo qual o servidor libera origens específicas, por meio de cabeçalhos HTTP como `Access-Control-Allow-Origin`. Por isso o erro de CORS se corrige no servidor, não no front. No meu projeto, isso é o `CORS_ALLOWED_ORIGINS` no Django.
 
 **"Qual a diferença entre `npm run dev` e `npm run build`?"**
 O `dev` sobe um servidor de desenvolvimento com recarregamento automático e sem otimização, feito para programar. O `build` gera arquivos estáticos otimizados (minificados e agrupados) em `dist/`, que é o que vai para produção.

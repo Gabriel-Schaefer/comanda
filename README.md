@@ -54,7 +54,7 @@ npm run dev
 ```
 
 - API: http://localhost:8000/api/cardapio/
-- Admin (cadastro do cardápio): http://localhost:8000/admin/ (crie um usuário com `python manage.py createsuperuser`)
+- Admin (cadastro do cardápio): http://localhost:8000/admin/ (crie um usuário com `.venv\Scripts\python manage.py createsuperuser`, dentro de `api`)
 - Frontend: http://localhost:5173
 
 ## API
@@ -75,8 +75,8 @@ npm run dev
 ## Testes
 
 ```powershell
-cd api; .venv\Scripts\python -m pytest     # backend
-cd web; npm run test:run                   # frontend
+cd api; .venv\Scripts\python -m pytest; cd ..     # backend
+cd web; npm run test:run; cd ..                   # frontend
 ```
 
 ## Decisões e limitações

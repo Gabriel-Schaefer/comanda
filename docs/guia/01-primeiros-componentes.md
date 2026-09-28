@@ -295,8 +295,10 @@ Ele continua passando se o `<h1>Comanda</h1>` estiver na página. Se você mudou
 
 ### 9. Commit
 
+Você ainda está dentro da pasta `web` (do passo 8), então o caminho é só `src`:
+
 ```powershell
-git add web/src
+git add src
 git commit -m "feat(web): tela do cardápio com dados de exemplo"
 ```
 

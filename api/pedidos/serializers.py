@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 
 from cardapio.models import Produto
@@ -54,9 +56,21 @@ class ItemEntradaSerializer(serializers.Serializer):
         }
 
 
+TOTAL_MAXIMO = Decimal("99999999.99")  # limite de Pedido.total (max_digits=10)
+
+
 class PedidoEntradaSerializer(serializers.Serializer):
     mesa = serializers.IntegerField(min_value=1, max_value=999)
-    itens = ItemEntradaSerializer(many=True, allow_empty=False)
+    itens = ItemEntradaSerializer(many=True, allow_empty=False, max_length=50)
+
+    def validate(self, dados):
+        total = sum(
+            (item["produto"].preco + sum(a.preco for a in item["adicionais"])) * item["quantidade"]
+            for item in dados["itens"]
+        )
+        if total > TOTAL_MAXIMO:
+            raise serializers.ValidationError("O valor do pedido ultrapassa o limite permitido.")
+        return dados
 
 
 class StatusEntradaSerializer(serializers.Serializer):
