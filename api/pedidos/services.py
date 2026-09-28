@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.db import transaction
 
 from .models import ItemPedido, ItemPedidoAdicional, Pedido
+from .notificacoes import notificar_pedido
 
 
 def pedidos_com_itens():
@@ -34,6 +35,7 @@ def criar_pedido(mesa: int, itens: list[dict]) -> Pedido:
 
     pedido.total = total
     pedido.save(update_fields=["total"])
+    transaction.on_commit(lambda: notificar_pedido(pedido.id, "pedido_criado"))
     return pedido
 
 
@@ -59,4 +61,5 @@ def avancar_status(pedido_id: int, novo_status: str) -> Pedido:
         )
     pedido.status = novo_status
     pedido.save(update_fields=["status", "atualizado_em"])
+    transaction.on_commit(lambda: notificar_pedido(pedido.id, "pedido_atualizado"))
     return pedido
