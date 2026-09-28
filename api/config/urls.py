@@ -11,4 +11,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/saude/", saude),
     path("api/", include("cardapio.urls")),
+    path("api/", include("pedidos.urls")),
 ]

@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "channels",
     "cardapio",
+    "pedidos",
 ]
 
 MIDDLEWARE = [
