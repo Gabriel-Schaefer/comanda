@@ -16,3 +16,8 @@ web/.env.local
 Thumbs.db
 .vscode/
 .idea/
+
+# Claude Code (contexto pessoal e registros locais)
+CLAUDE.md
+CLAUDE.local.md
+.superpowers/
